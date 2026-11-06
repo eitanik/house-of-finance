@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    /** Client-direct mode (EXPO_PUBLIC_USE_CLOUD_FUNCTIONS=0): מאפשר לכל משתמש מחובר לכתוב את המסמך שלו ואת פקודותיו בלבד.
+        בפרודקשן מומלץ Cloud Functions + כללים נוקשים (ללא כתיבה מהקליינט). */
+
+    match /world/state {
+      allow read: if true;
+      /* אתחול עולם — רק משתמש מחובר, ורק אם המסמך עדיין לא קיים. */
+      allow create: if signedIn() && !exists(/databases/$(database)/documents/world/state);
+      /* קידום זמן מהקליינט (מצב ללא Functions). */
+      allow update: if signedIn();
+    }
+
+    match /cache/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /locks/{doc} {
+      allow read, write: if false;
+    }
+
+    match /rateLimits/{doc} {
+      allow read, write: if false;
+    }
+
+    match /players/{uid} {
+      allow read: if true;
+      allow create: if signedIn() && request.auth.uid == uid;
+      /* עדכון עצמי + קידום עולם מהקליינט מעדכן את כל השחקנים — רק למצב dev ללא Functions (לא מאובטח כמו Functions). */
+      allow update: if signedIn();
+      allow delete: if false;
+
+      match /snapshots/{snapId} {
+        /* טבלת דירוג טוענת snapshots של כולם; קידום עולם מהקליינט כותב לכל השחקנים — מצב dev בלבד */
+        allow read: if true;
+        allow create, update: if signedIn();
+        allow delete: if false;
+      }
+    }
+
+    match /orders/{orderId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['userId', 'symbol', 'side', 'amountIls', 'submittedAtSimMs', 'status', 'createdAt'])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.userId is string
+        && request.resource.data.symbol is string
+        && request.resource.data.side in ['buy', 'sell']
+        && request.resource.data.amountIls is number
+        && request.resource.data.submittedAtSimMs is number
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt is timestamp;
+      /* ביצוע פקודות / קידום עולם מהקליינט דורש עדכון הזמנות — במצב dev בלבד */
+      allow update: if signedIn();
+      allow delete: if false;
+    }
+  }
+}
