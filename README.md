@@ -100,3 +100,7 @@ Expo SDK 58, TypeScript, Firebase Auth + Firestore, Hosting לגרסת Web.
 ## פיצ'ר retention: יעד יומי
 
 ראו [docs/DAILY_QUEST_RETENTION.md](docs/DAILY_QUEST_RETENTION.md) — בחירת הפיצ'ר, מדדים, ודיון באלטרנטיבות.
+
+## צפייה בתיק שחקן אחר
+
+מטאב **דירוג** — לחיצה על שורה פותחת סיכום תיק (`app/player/[uid].tsx`).

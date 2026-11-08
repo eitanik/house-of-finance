@@ -153,6 +153,11 @@ export async function fetchSnapshots(uid: string): Promise<PortfolioSnapshot[]> 
   return snap.docs.map((d) => d.data() as PortfolioSnapshot).sort((a, b) => a.simMs - b.simMs);
 }
 
+export async function fetchPlayerByUid(uid: string): Promise<Player | null> {
+  const snap = await getDoc(doc(getDb(), 'players', uid));
+  return snap.exists() ? (snap.data() as Player) : null;
+}
+
 export async function submitOrderFs(
   uid: string,
   symbol: string,

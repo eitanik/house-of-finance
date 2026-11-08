@@ -77,6 +77,11 @@ export async function getLocalState(): Promise<LocalGameState> {
   return ensureLocalGame();
 }
 
+export async function fetchLocalPlayer(uid: string): Promise<Player | null> {
+  const state = await ensureLocalGame();
+  return state.players[uid] ?? null;
+}
+
 export async function submitLocalOrder(
   uid: string,
   symbol: string,

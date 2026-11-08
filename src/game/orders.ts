@@ -164,5 +164,6 @@ export function validateNewOrder(
     const qty = amountIls / (px * fx);
     if (qty > (player.holdings[symbol] ?? 0)) return 'אין מספיק יחידות';
   }
+
   return null;
 }

@@ -38,6 +38,27 @@ export function portfolioTotalIls(
   return cashIls + holdingValueIls(holdings, series, simMs, priceType);
 }
 
+export function countDistinctHoldings(holdings: Holdings): number {
+  let n = 0;
+  for (const qty of Object.values(holdings)) {
+    if (qty > 1e-12) n++;
+  }
+  return n;
+}
+
+export function countHoldingsByMarket(holdings: Holdings): { tase: number; us: number } {
+  let tase = 0;
+  let us = 0;
+  for (const [symbol, qty] of Object.entries(holdings)) {
+    if (qty <= 1e-12) continue;
+    const inst = INSTRUMENT_BY_SYMBOL[symbol];
+    if (!inst) continue;
+    if (inst.market === 'TASE') tase++;
+    else us++;
+  }
+  return { tase, us };
+}
+
 export function wouldExceedConcentration(
   cashIls: number,
   holdings: Holdings,

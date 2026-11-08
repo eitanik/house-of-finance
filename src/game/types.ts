@@ -71,6 +71,8 @@ export type Player = {
   holdings: Holdings;
   createdAt: number;
   dailyQuest?: DailyQuestState;
+  /** false = הסתרת תיק מאחרים (ברירת מחדל: גלוי) */
+  portfolioPublic?: boolean;
 };
 
 export type PortfolioSnapshot = {

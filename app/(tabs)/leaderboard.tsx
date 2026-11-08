@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { GlassCard } from '../../src/components/ui/GlassCard';
 import { Screen } from '../../src/components/ui/Screen';
@@ -66,6 +67,7 @@ export default function LeaderboardScreen() {
           const rank = index + 1;
           const isMe = item.uid === uid;
           return (
+            <Pressable onPress={() => router.push(`/player/${item.uid}`)}>
             <GlassCard style={isMe ? [styles.row, styles.rowMe] : styles.row}>
               <View style={styles.rowHead}>
                 <RankBadge rank={rank} />
@@ -74,6 +76,7 @@ export default function LeaderboardScreen() {
                     {item.displayName}
                     {isMe ? '  (את/ה)' : ''}
                   </Text>
+                  <Text style={styles.viewPortfolio}>לחצו לצפייה בתיק</Text>
                   <Text style={styles.returnText}>
                     תשואה שבועית: {(item.weeklyReturn * 100).toFixed(2)}% · שקע (MDD): {(item.mdd * 100).toFixed(1)}%
                     {item.dailyBonus > 0 ? ` · בונוס יומי +${item.dailyBonus.toFixed(1)}` : ''}
@@ -88,6 +91,7 @@ export default function LeaderboardScreen() {
               <ScoreBar label="דירוג תשואה" value={item.returnPercentile} color={colors.buy} />
               <ScoreBar label="דירוג יציבות" value={item.stabilityPercentile} color={colors.accentBlue} />
             </GlassCard>
+            </Pressable>
           );
         }}
       />
@@ -107,6 +111,7 @@ const styles = StyleSheet.create({
   rankNum: { color: colors.textMuted, fontWeight: '800', fontSize: 18, width: 36, textAlign: 'center' },
   name: { color: colors.text, fontWeight: '800', fontSize: 16 },
   returnText: { color: colors.textDim, fontSize: 12, marginTop: 4 },
+  viewPortfolio: { color: colors.accent, fontSize: 11, marginTop: 2, fontWeight: '600' },
   scoreBox: { alignItems: 'center', backgroundColor: 'rgba(52,211,153,0.12)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: radii.sm },
   score: { color: colors.buy, fontWeight: '900', fontSize: 20 },
   scoreLabel: { color: colors.textDim, fontSize: 10, fontWeight: '700' },

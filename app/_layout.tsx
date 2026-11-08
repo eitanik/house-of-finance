@@ -15,6 +15,7 @@ function RootNav() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="player/[uid]" options={{ headerShown: true, title: 'תיק שחקן' }} />
       </Stack>
     </GameProvider>
   );
